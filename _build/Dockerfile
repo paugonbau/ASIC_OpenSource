@@ -34,11 +34,21 @@ COPY images/magic/scripts/install.sh install.sh
 RUN bash install.sh
 
 #######################################################################
+# Compile openvaf
+#######################################################################
+FROM basepkg as openvaf
+ARG OPENVAF_REPO_URL="https://github.com/iic-jku/OpenVAF.git"
+ARG OPENVAF_REPO_COMMIT="a9697ae7780518f021f9f64e819b3a57033bd39f"
+ARG OPENVAF_NAME="openvaf"
+COPY images/openvaf/scripts/install.sh install.sh
+RUN bash install.sh
+
+#######################################################################
 # Compile osic-multitool
 #######################################################################
-FROM magic as osic-multitool
+FROM openvaf as osic-multitool
 ARG OSIC_MULTITOOL_REPO_URL="https://github.com/iic-jku/osic-multitool.git"
-ARG OSIC_MULTITOOL_REPO_COMMIT="1a49dbf27a79262ae63d70153163945baec4acf3"
+ARG OSIC_MULTITOOL_REPO_COMMIT="43b39cd209338b33d663973b0ab826290eca8d9e"
 ARG OSIC_MULTITOOL_NAME="osic-multitool"
 COPY images/osic-multitool/scripts/install.sh install.sh
 RUN bash install.sh
@@ -143,7 +153,7 @@ RUN bash install.sh
 #######################################################################
 FROM base as iverilog
 ARG IVERILOG_REPO_URL="https://github.com/steveicarus/iverilog.git"
-ARG IVERILOG_REPO_COMMIT="77d7f0b8f73de3111580294744e3e95c19a0aa30"
+ARG IVERILOG_REPO_COMMIT="28987277adf8bd99da5b777aa7b3275d4a1fa016"
 ARG IVERILOG_NAME="iverilog"
 COPY images/iverilog/scripts/install.sh install.sh
 RUN bash install.sh
@@ -172,7 +182,7 @@ RUN bash install.sh
 # Compile ngspice
 #######################################################################
 FROM open_pdks as ngspice
-ARG NGSPICE_REPO_URL="https://git.code.sf.net/p/ngspice/ngspice"
+ARG NGSPICE_REPO_URL="https://github.com/danchitnis/ngspice-sf-mirror"
 ARG NGSPICE_REPO_COMMIT="ngspice-41"
 ARG NGSPICE_NAME="ngspice"
 COPY images/ngspice/scripts/install.sh install.sh
@@ -203,7 +213,7 @@ RUN bash install.sh
 #######################################################################
 FROM basepkg as openlane
 ARG OPENLANE_REPO_URL="https://github.com/The-OpenROAD-Project/OpenLane"
-ARG OPENLANE_REPO_COMMIT="2023.10.27"
+ARG OPENLANE_REPO_COMMIT="2023.11.13"
 ARG OPENLANE_NAME="openlane"
 COPY images/openlane/scripts/install.sh install.sh
 RUN bash install.sh
@@ -263,7 +273,7 @@ RUN bash install.sh
 #######################################################################
 FROM base as riscv-gnu-toolchain-rv32i
 ARG RISCV_GNU_TOOLCHAIN_RV32I_REPO_URL="https://github.com/riscv-collab/riscv-gnu-toolchain.git"
-ARG RISCV_GNU_TOOLCHAIN_RV32I_REPO_COMMIT="2023.10.18"
+ARG RISCV_GNU_TOOLCHAIN_RV32I_REPO_COMMIT="2023.11.08"
 ARG RISCV_GNU_TOOLCHAIN_RV32I_NAME="riscv-gnu-toolchain-rv32i"
 COPY images/riscv-gnu-toolchain-rv32i/scripts/install.sh install.sh
 RUN bash install.sh
@@ -273,7 +283,7 @@ RUN bash install.sh
 #######################################################################
 FROM base as slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="033da1084db12eb22817b5710233cd3cd59e5112"
+ARG SLANG_REPO_COMMIT="879b86db7841251bf97b10e25b7c62a1e99c8021"
 ARG SLANG_NAME="slang"
 COPY images/slang/scripts/install.sh install.sh
 RUN bash install.sh
@@ -293,7 +303,7 @@ RUN bash install.sh
 #######################################################################
 FROM base as xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="a76dca4f298b2daf74f0e45b85795d87b2e3599e"
+ARG XSCHEM_REPO_COMMIT="852f2bd25ddc3408a4bffa54194a9cac67bddd7d"
 ARG XSCHEM_NAME="xschem"
 COPY images/xschem/scripts/install.sh install.sh
 RUN bash install.sh
@@ -313,7 +323,7 @@ RUN bash install.sh
 
 FROM xyce as xyce-xdm
 ARG XYCE_XDM_REPO_URL="https://github.com/Xyce/XDM"
-ARG XYCE_XDM_REPO_COMMIT="Release-2.6.0"
+ARG XYCE_XDM_REPO_COMMIT="Release-2.7.0"
 ARG XYCE_XDM_NAME="xyce-xdm"
 COPY images/xyce-xdm/scripts/install.sh install.sh
 RUN bash install.sh
@@ -417,6 +427,7 @@ COPY --from=ngspyce                      ${TOOLS}/              ${TOOLS}/
 COPY --from=openlane                     ${TOOLS}/              ${TOOLS}/
 COPY --from=openroad_app                 ${TOOLS}/              ${TOOLS}/
 COPY --from=osic-multitool               ${TOOLS}/              ${TOOLS}/
+COPY --from=openvaf                      ${TOOLS}/              ${TOOLS}/
 COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
 COPY --from=pyopus                       ${TOOLS}/              ${TOOLS}/
 COPY --from=qflow                        ${TOOLS}/              ${TOOLS}/
